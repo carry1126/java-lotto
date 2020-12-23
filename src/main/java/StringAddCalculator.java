@@ -3,11 +3,12 @@ import java.util.regex.Pattern;
 
 public class StringAddCalculator {
 
-    private static final String COMMA = ",";
-    private static final int NUM_LENGTH = 1;
-    private static final String COLON = ":";
-    private final Pattern numPattern = Pattern.compile("(^[0-9]$)");
-    private final Pattern customPattern = Pattern.compile("//(.)\n(.*)");
+    public static final String COMMA = ",";
+    public static final int NUM_LENGTH = 1;
+    public static final String COLON = ":";
+    public static final Pattern numPattern = Pattern.compile("(^[0-9]$)");
+    public static final Pattern customPattern = Pattern.compile("//(.)\n(.*)");
+    public static final String COMMA_COLON = ",|:";
 
     public int splitAndSum(String input) {
         int sum = 0;
@@ -22,14 +23,14 @@ public class StringAddCalculator {
         }
         Matcher m = customPattern.matcher(input);
         if (m.find()) {
-            return calculateMatcherSum(sum, m);
+            return calculateMatcherSum(m);
         }
         return sum;
     }
 
     private int calculatorColonCommaDelimitor(String input) {
         if (input.contains(COLON)) {
-            String[] tokens = input.split(",|:");
+            String[] tokens = input.split(COMMA_COLON);
             return getSum(tokens);
         }
 
@@ -40,24 +41,28 @@ public class StringAddCalculator {
         int sum = 0;
         String[] numbers = input.split(COMMA);
         for (String num : numbers) {
+            notNumberException(num);
             int number = Integer.parseInt(num);
-            extractException(number);
+            minusException(number);
             sum += number;
         }
         return sum;
     }
 
-    private void extractException(int num) {
-        if (num < 0) {
-            throw new RuntimeException("음수가 전달되었습니다.");
-        }
-        Matcher m = numPattern.matcher(Integer.toString(num));
+    private void notNumberException(String num) {
+        Matcher m = numPattern.matcher(num);
         if (!m.find()) {
             throw new NumberFormatException("숫자 이외의 값이 전달되었습니다.");
         }
     }
 
-    private int calculateMatcherSum(int sum, Matcher m) {
+    private void minusException(int num) {
+        if (num < 0) {
+            throw new RuntimeException("음수가 전달되었습니다.");
+        }
+    }
+
+    private int calculateMatcherSum(Matcher m) {
         String customDelimiter = m.group(1);
         String[] tokens = m.group(2).split(customDelimiter);
         return getSum(tokens);
