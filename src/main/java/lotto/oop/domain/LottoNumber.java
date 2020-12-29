@@ -28,7 +28,7 @@ public class LottoNumber {
         this.number = sixNumber;
     }
 
-    public int confrimLotto(LottoNumber list, String[] numbers) {
+    public int checkLotto(LottoNumber list, String[] numbers) {
         int num = 0;
         for (int i = 0; i < numbers.length; i++) {
             num += verifyNumCount(list, numbers, i);
